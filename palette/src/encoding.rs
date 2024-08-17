@@ -7,18 +7,18 @@
 
 pub use self::adobe::AdobeRgb;
 pub use self::gamma::{F2p2, Gamma};
+pub use self::itu_standards::{Bt2020, Bt601Ntsc, Bt601Pal, Bt709};
 pub use self::linear::Linear;
 pub use self::p3::{DciP3, DciP3Plus, DisplayP3};
 pub use self::prophoto::ProPhotoRgb;
-pub use self::rec_standards::{Rec2020, Rec709};
 pub use self::srgb::Srgb;
 
 pub mod adobe;
 pub mod gamma;
+pub mod itu_standards;
 pub mod linear;
 pub mod p3;
 pub mod prophoto;
-pub mod rec_standards;
 pub mod srgb;
 
 /// A transfer function from linear space.

@@ -258,20 +258,36 @@ pub type LinProPhotoRgb<T = f32> = Rgb<Linear<encoding::ProPhotoRgb>, T>;
 /// create a value and use it.
 pub type LinProPhotoRgba<T = f32> = Rgba<Linear<encoding::ProPhotoRgb>, T>;
 
+/// Rec. 601 for 525 line (NTSC) systems.
+///
+/// This standard and [`Bt601Pal`] have similar, but slightly different primaries, and
+/// use the same transfer function as [`Bt709`] and [`Bt2020`].
+///
+/// See [`Rgb`] for more details on how to create a value and use it.
+pub type Bt601Ntsc<T = f32> = Rgb<encoding::Bt601Ntsc, T>;
+
+/// Rec. 601 for 625 line (PAL and SECAM) systems.
+///
+/// This standard and [`Bt601Ntsc`] have similar, but slightly different primaries, and
+/// use the same transfer function as [`Bt709`] and [`Bt2020`].
+///
+/// See [`Rgb`] for more details on how to create a value and use it.
+pub type Bt601Pal<T = f32> = Rgb<encoding::Bt601Pal, T>;
+
 /// Rec. 709.
 ///
 /// This standard has the same primaries as [`Srgb`], but uses the transfer
 /// function detailed in ITU-R Recommendation BT.709.
 ///
 /// See [`Rgb`] for more details on how to create a value and use it.
-pub type Rec709<T = f32> = Rgb<encoding::Rec709, T>;
+pub type Bt709<T = f32> = Rgb<encoding::Bt709, T>;
 
 /// Non-linear Rec. 2020, a wide color gamut RGB format.
 ///
 /// This is an RGB standard with a color gamut much wider than that of [`Srgb`].
 ///
 /// See [`Rgb`] for more details on how to create a value and use it.
-pub type Rec2020<T = f32> = Rgb<encoding::Rec2020, T>;
+pub type Bt2020<T = f32> = Rgb<encoding::Bt2020, T>;
 
 /// Linear Rec. 2020.
 ///
@@ -280,7 +296,7 @@ pub type Rec2020<T = f32> = Rgb<encoding::Rec2020, T>;
 /// convert to before working with the color.
 ///
 /// See [`Rgb`] for more details on how to create a value and use it.
-pub type LinRec2020<T = f32> = Rgb<Linear<encoding::Rec2020>, T>;
+pub type LinBt2020<T = f32> = Rgb<Linear<encoding::Bt2020>, T>;
 
 /// An RGB space and a transfer function.
 pub trait RgbStandard {
