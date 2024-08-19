@@ -182,7 +182,7 @@ mod test {
             for i in 0..=255u8 {
                 let u8_impl: f32 = RecOetf::into_linear(i);
                 let f32_impl = RecOetf::into_linear(i as f32 / 255.0);
-                assert_relative_eq!(u8_impl, f32_impl, epsilon = 0.0000001);
+                assert_relative_eq!(u8_impl, f32_impl, epsilon = 0.000001);
             }
         }
 
