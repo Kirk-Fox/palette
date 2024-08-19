@@ -150,8 +150,10 @@ mod test {
 
         #[test]
         fn correct_values() {
-            assert_relative_eq!(AdobeRgb::from_linear(0.5), 0.72965838, epsilon = 0.0000001);
-            assert_relative_eq!(AdobeRgb::into_linear(0.5), 0.21775552, epsilon = 0.0000001);
+            let half_to_encoded: f64 = AdobeRgb::from_linear(0.5);
+            assert_relative_eq!(half_to_encoded, 0.72965838, epsilon = 0.0000001);
+            let half_to_linear = AdobeRgb::into_linear(0.5);
+            assert_relative_eq!(half_to_linear, 0.21775552, epsilon = 0.0000001);
         }
     }
 }

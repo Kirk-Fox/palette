@@ -10,10 +10,6 @@ use crate::{
     Mat3, Yxy,
 };
 
-use lookup_tables::*;
-
-mod lookup_tables;
-
 /// The sRGB standard, color space, and transfer function.
 ///
 /// # As transfer function
@@ -119,34 +115,6 @@ where
             if x.lt_eq(&T::from_f64(0.0031308)) => T::from_f64(12.92) * &x,
             else => x.clone().powf(T::from_f64(1.0 / 2.4)).mul_sub(T::from_f64(1.055), T::from_f64(0.055)),
         }
-    }
-}
-
-impl IntoLinear<f32, u8> for Srgb {
-    #[inline]
-    fn into_linear(encoded: u8) -> f32 {
-        fast_srgb8::srgb8_to_f32(encoded)
-    }
-}
-
-impl FromLinear<f32, u8> for Srgb {
-    #[inline]
-    fn from_linear(linear: f32) -> u8 {
-        fast_srgb8::f32_to_srgb8(linear)
-    }
-}
-
-impl IntoLinear<f64, u8> for Srgb {
-    #[inline]
-    fn into_linear(encoded: u8) -> f64 {
-        SRGB_U8_TO_F64[encoded as usize]
-    }
-}
-
-impl FromLinear<f64, u8> for Srgb {
-    #[inline]
-    fn from_linear(linear: f64) -> u8 {
-        Srgb::from_linear(linear as f32)
     }
 }
 
