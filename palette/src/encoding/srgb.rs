@@ -143,6 +143,7 @@ mod test {
         }
     }
 
+    #[cfg(feature = "approx")]
     mod transfer {
         use crate::encoding::{FromLinear, IntoLinear, Srgb};
 
