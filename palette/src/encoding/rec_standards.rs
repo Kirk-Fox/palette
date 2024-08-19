@@ -157,7 +157,7 @@ mod test {
 
     #[cfg(feature = "approx")]
     mod transfer {
-        use crate::encoding::{rec_standards::RecOetf, FromLinear, IntoLinear};
+        use crate::encoding::{FromLinear, IntoLinear, RecOetf};
 
         #[test]
         fn lin_to_enc_to_lin() {
@@ -176,8 +176,14 @@ mod test {
                 assert_relative_eq!(encoded, RecOetf::from_linear(linear), epsilon = 0.0000001);
             }
         }
+    }
+
+    #[cfg(feature = "rec_oetf_lut")]
+    mod lut {
+        use crate::encoding::{FromLinear, IntoLinear, RecOetf};
 
         #[test]
+        #[cfg(feature = "approx")]
         fn test_u8_f32_into_impl() {
             for i in 0..=255u8 {
                 let u8_impl: f32 = RecOetf::into_linear(i);
@@ -187,6 +193,7 @@ mod test {
         }
 
         #[test]
+        #[cfg(feature = "approx")]
         fn test_u8_f64_into_impl() {
             for i in 0..=255u8 {
                 let u8_impl: f64 = RecOetf::into_linear(i);

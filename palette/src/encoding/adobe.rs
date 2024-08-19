@@ -155,6 +155,31 @@ mod test {
             let half_to_linear = AdobeRgb::into_linear(0.5);
             assert_relative_eq!(half_to_linear, 0.21775552, epsilon = 0.0000001);
         }
+    }
+
+    #[cfg(feature = "adobe_rgb_lut")]
+    mod lut {
+        use crate::encoding::{AdobeRgb, FromLinear, IntoLinear};
+
+        #[test]
+        #[cfg(feature = "approx")]
+        fn test_u8_f32_into_impl() {
+            for i in 0..=255u8 {
+                let u8_impl: f32 = AdobeRgb::into_linear(i);
+                let f32_impl = AdobeRgb::into_linear(i as f32 / 255.0);
+                assert_relative_eq!(u8_impl, f32_impl, epsilon = 0.000001);
+            }
+        }
+
+        #[test]
+        #[cfg(feature = "approx")]
+        fn test_u8_f64_into_impl() {
+            for i in 0..=255u8 {
+                let u8_impl: f64 = AdobeRgb::into_linear(i);
+                let f64_impl = AdobeRgb::into_linear(i as f64 / 255.0);
+                assert_relative_eq!(u8_impl, f64_impl, epsilon = 0.0000001);
+            }
+        }
 
         #[test]
         fn u8_to_f32_to_u8() {

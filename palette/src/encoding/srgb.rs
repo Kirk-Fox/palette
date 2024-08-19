@@ -120,8 +120,6 @@ where
 
 #[cfg(test)]
 mod test {
-    use crate::encoding::{FromLinear, IntoLinear, Srgb};
-
     #[cfg(feature = "approx")]
     mod conversion {
         use crate::{
@@ -145,21 +143,67 @@ mod test {
         }
     }
 
-    #[test]
-    fn u8_to_f32_to_u8() {
-        for expected in 0u8..=255u8 {
-            let linear: f32 = Srgb::into_linear(expected);
-            let result: u8 = Srgb::from_linear(linear);
-            assert_eq!(result, expected);
+    mod transfer {
+        use crate::encoding::{FromLinear, IntoLinear, Srgb};
+
+        #[test]
+        fn lin_to_enc_to_lin() {
+            for i in 0..=100 {
+                let linear = i as f64 / 100.0;
+                let encoded: f64 = Srgb::from_linear(linear);
+                assert_relative_eq!(linear, Srgb::into_linear(encoded), epsilon = 0.0000001);
+            }
+        }
+
+        #[test]
+        fn enc_to_lin_to_enc() {
+            for i in 0..=100 {
+                let encoded = i as f64 / 100.0;
+                let linear: f64 = Srgb::into_linear(encoded);
+                assert_relative_eq!(encoded, Srgb::from_linear(linear), epsilon = 0.0000001);
+            }
         }
     }
 
-    #[test]
-    fn u8_to_f64_to_u8() {
-        for expected in 0u8..=255u8 {
-            let linear: f64 = Srgb::into_linear(expected);
-            let result: u8 = Srgb::from_linear(linear);
-            assert_eq!(result, expected);
+    mod lut {
+        use crate::encoding::{FromLinear, IntoLinear, Srgb};
+
+        #[test]
+        #[cfg(feature = "approx")]
+        fn test_u8_f32_into_impl() {
+            for i in 0..=255u8 {
+                let u8_impl: f32 = Srgb::into_linear(i);
+                let f32_impl = Srgb::into_linear(i as f32 / 255.0);
+                assert_relative_eq!(u8_impl, f32_impl, epsilon = 0.000001);
+            }
+        }
+
+        #[test]
+        #[cfg(feature = "approx")]
+        fn test_u8_f64_into_impl() {
+            for i in 0..=255u8 {
+                let u8_impl: f64 = Srgb::into_linear(i);
+                let f64_impl = Srgb::into_linear(i as f64 / 255.0);
+                assert_relative_eq!(u8_impl, f64_impl, epsilon = 0.0000001);
+            }
+        }
+
+        #[test]
+        fn u8_to_f32_to_u8() {
+            for expected in 0..=255u8 {
+                let linear: f32 = Srgb::into_linear(expected);
+                let result: u8 = Srgb::from_linear(linear);
+                assert_eq!(result, expected);
+            }
+        }
+
+        #[test]
+        fn u8_to_f64_to_u8() {
+            for expected in 0..=255u8 {
+                let linear: f64 = Srgb::into_linear(expected);
+                let result: u8 = Srgb::from_linear(linear);
+                assert_eq!(result, expected);
+            }
         }
     }
 }

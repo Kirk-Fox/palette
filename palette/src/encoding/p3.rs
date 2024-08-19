@@ -320,8 +320,52 @@ mod test {
         }
     }
 
+    #[cfg(feature = "approx")]
     mod transfer {
         use crate::encoding::{FromLinear, IntoLinear, P3Gamma};
+
+        #[test]
+        fn lin_to_enc_to_lin() {
+            for i in 0..=100 {
+                let linear = i as f64 / 100.0;
+                let encoded: f64 = P3Gamma::from_linear(linear);
+                assert_relative_eq!(linear, P3Gamma::into_linear(encoded), epsilon = 0.0000001);
+            }
+        }
+
+        #[test]
+        fn enc_to_lin_to_enc() {
+            for i in 0..=100 {
+                let encoded = i as f64 / 100.0;
+                let linear: f64 = P3Gamma::into_linear(encoded);
+                assert_relative_eq!(encoded, P3Gamma::from_linear(linear), epsilon = 0.0000001);
+            }
+        }
+    }
+
+    #[cfg(feature = "p3_gamma_lut")]
+    mod lut {
+        use crate::encoding::{FromLinear, IntoLinear, P3Gamma};
+
+        #[test]
+        #[cfg(feature = "approx")]
+        fn test_u8_f32_into_impl() {
+            for i in 0..=255u8 {
+                let u8_impl: f32 = P3Gamma::into_linear(i);
+                let f32_impl = P3Gamma::into_linear(i as f32 / 255.0);
+                assert_relative_eq!(u8_impl, f32_impl, epsilon = 0.000001);
+            }
+        }
+
+        #[test]
+        #[cfg(feature = "approx")]
+        fn test_u8_f64_into_impl() {
+            for i in 0..=255u8 {
+                let u8_impl: f64 = P3Gamma::into_linear(i);
+                let f64_impl = P3Gamma::into_linear(i as f64 / 255.0);
+                assert_relative_eq!(u8_impl, f64_impl, epsilon = 0.0000001);
+            }
+        }
 
         #[test]
         fn u8_to_f32_to_u8() {
