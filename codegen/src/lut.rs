@@ -9,8 +9,10 @@ pub fn build() {
     build_transfer_fn(&mut writer);
 }
 
+#[cfg(any(feature = "float_lut", feature = "fast_uint_lut"))]
 type TransferFn = Box<dyn Fn(f64) -> f64>;
 
+#[cfg(any(feature = "float_lut", feature = "fast_uint_lut"))]
 struct LutEntryU8 {
     fn_type: String,
     fn_type_uppercase: String,
@@ -18,6 +20,7 @@ struct LutEntryU8 {
     into_linear: TransferFn,
 }
 
+#[cfg(any(feature = "float_lut16", feature = "fast_uint_lut16"))]
 struct LutEntryU16 {
     fn_type: String,
     fn_type_uppercase: String,
@@ -26,6 +29,7 @@ struct LutEntryU16 {
     is_linear_as_until: Option<(f64, f64)>,
 }
 
+#[cfg(any(feature = "float_lut", feature = "fast_uint_lut"))]
 impl LutEntryU8 {
     fn new<F1: Fn(f64) -> f64 + 'static, F2: Fn(f64) -> f64 + 'static>(
         fn_type: &str,
@@ -42,6 +46,7 @@ impl LutEntryU8 {
     }
 }
 
+#[cfg(any(feature = "float_lut16", feature = "fast_uint_lut16"))]
 impl LutEntryU16 {
     fn new<F1: Fn(f64) -> f64 + 'static, F2: Fn(f64) -> f64 + 'static>(
         fn_type: &str,
@@ -128,6 +133,7 @@ pub fn build_transfer_fn(writer: &mut File) {
             |encoded| encoded.powf(2.6),
         ),
     ];
+    #[cfg(any(feature = "float_lut16", feature = "fast_uint_lut16"))]
     let entries_u16: Vec<LutEntryU16> = vec![LutEntryU16::new_with_linear(
         "ProPhotoRgb",
         "PROPHOTO_RGB",
@@ -153,14 +159,19 @@ pub fn build_transfer_fn(writer: &mut File) {
     for entry in &entries_u8 {
         write!(writer, ", {}", entry.fn_type).unwrap();
     }
+    #[cfg(any(feature = "float_lut16", feature = "fast_uint_lut16"))]
     for entry in &entries_u16 {
         write!(writer, ", {}", entry.fn_type).unwrap();
     }
     writeln!(writer, "}};").unwrap();
 
+    #[cfg(feature = "float_lut")]
     gen_into_linear_lut_u8(writer, &entries_u8);
+    #[cfg(feature = "float_lut16")]
     gen_into_linear_lut_u16(writer, &entries_u16);
+    #[cfg(feature = "fast_uint_lut")]
     gen_from_linear_lut_u8(writer, &entries_u8);
+    #[cfg(feature = "fast_uint_lut16")]
     gen_from_linear_lut_u16(writer, &entries_u16)
 }
 
@@ -221,9 +232,6 @@ fn gen_into_linear_lut_u8(writer: &mut File, entries: &[LutEntryU8]) {
     }
 }
 
-#[cfg(not(feature = "float_lut"))]
-fn gen_into_linear_lut_u8(_writer: &mut File, _entries: &[LutEntryU8]) {}
-
 #[cfg(feature = "float_lut16")]
 fn gen_into_linear_lut_u16(writer: &mut File, entries: &[LutEntryU16]) {
     for LutEntryU16 {
@@ -277,9 +285,6 @@ fn gen_into_linear_lut_u16(writer: &mut File, entries: &[LutEntryU16]) {
         .unwrap();
     }
 }
-
-#[cfg(not(feature = "float_lut16"))]
-fn gen_into_linear_lut_u16(_writer: &mut File, _entries: &[LutEntryU16]) {}
 
 #[cfg(feature = "fast_uint_lut")]
 fn gen_from_linear_lut_u8(writer: &mut File, entries: &[LutEntryU8]) {
@@ -406,9 +411,6 @@ fn gen_from_linear_lut_u8(writer: &mut File, entries: &[LutEntryU8]) {
         }
     }
 }
-
-#[cfg(not(feature = "fast_uint_lut"))]
-fn gen_from_linear_lut_u8(_writer: &mut File, _entries: &[LutEntryU8]) {}
 
 #[cfg(feature = "fast_uint_lut16")]
 fn gen_from_linear_lut_u16(writer: &mut File, entries: &[LutEntryU16]) {
@@ -583,6 +585,3 @@ fn gen_from_linear_lut_u16(writer: &mut File, entries: &[LutEntryU16]) {
         }
     }
 }
-
-#[cfg(not(feature = "fast_uint_lut16"))]
-fn gen_from_linear_lut_u16(_writer: &mut File, _entries: &[LutEntryU16]) {}
