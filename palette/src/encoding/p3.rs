@@ -99,10 +99,18 @@ pub struct DciP3Plus<F>(PhantomData<F>);
 
 impl<T: Real, F> Primaries<T> for DciP3Plus<F> {
     fn red() -> Yxy<Any, T> {
-        Yxy::new(T::from_f64(0.740), T::from_f64(0.270), T::from_f64(0.203986))
+        Yxy::new(
+            T::from_f64(0.740),
+            T::from_f64(0.270),
+            T::from_f64(0.203986),
+        )
     }
     fn green() -> Yxy<Any, T> {
-        Yxy::new(T::from_f64(0.220), T::from_f64(0.780), T::from_f64(0.882591))
+        Yxy::new(
+            T::from_f64(0.220),
+            T::from_f64(0.780),
+            T::from_f64(0.882591),
+        )
     }
     fn blue() -> Yxy<Any, T> {
         Yxy::new(
@@ -309,6 +317,28 @@ mod test {
             let blue: Xyz<Any, f64> = DciP3Plus::<P3Gamma>::blue().into_color_unclamped();
             // Compare sum of primaries to white point.
             assert_relative_eq!(red + green + blue, DciP3::get_xyz(), epsilon = 0.00001)
+        }
+    }
+
+    mod transfer {
+        use crate::encoding::{FromLinear, IntoLinear, P3Gamma};
+
+        #[test]
+        fn u8_to_f32_to_u8() {
+            for expected in 0u8..=255u8 {
+                let linear: f32 = P3Gamma::into_linear(expected);
+                let result: u8 = P3Gamma::from_linear(linear);
+                assert_eq!(result, expected);
+            }
+        }
+
+        #[test]
+        fn u8_to_f64_to_u8() {
+            for expected in 0u8..=255u8 {
+                let linear: f64 = P3Gamma::into_linear(expected);
+                let result: u8 = P3Gamma::from_linear(linear);
+                assert_eq!(result, expected);
+            }
         }
     }
 }

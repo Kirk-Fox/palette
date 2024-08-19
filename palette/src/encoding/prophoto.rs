@@ -147,4 +147,26 @@ mod test {
             assert_relative_eq!(red + green + blue, D50::get_xyz(), epsilon = 0.0001);
         }
     }
+
+    mod transfer {
+        use crate::encoding::{FromLinear, IntoLinear, ProPhotoRgb};
+
+        #[test]
+        fn u16_to_f32_to_u16() {
+            for expected in 0u16..=65535u16 {
+                let linear: f32 = ProPhotoRgb::into_linear(expected as f32 / 65535.0);
+                let result: u16 = ProPhotoRgb::from_linear(linear);
+                assert_eq!(result, expected);
+            }
+        }
+
+        #[test]
+        fn u16_to_f64_to_u16() {
+            for expected in 0u16..=65535u16 {
+                let linear: f64 = ProPhotoRgb::into_linear(expected as f64 / 65535.0);
+                let result: u16 = ProPhotoRgb::from_linear(linear);
+                assert_eq!(result, expected);
+            }
+        }
+    }
 }

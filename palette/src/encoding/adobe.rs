@@ -155,5 +155,23 @@ mod test {
             let half_to_linear = AdobeRgb::into_linear(0.5);
             assert_relative_eq!(half_to_linear, 0.21775552, epsilon = 0.0000001);
         }
+
+        #[test]
+        fn u8_to_f32_to_u8() {
+            for expected in 0u8..=255u8 {
+                let linear: f32 = AdobeRgb::into_linear(expected);
+                let result: u8 = AdobeRgb::from_linear(linear);
+                assert_eq!(result, expected);
+            }
+        }
+
+        #[test]
+        fn u8_to_f64_to_u8() {
+            for expected in 0u8..=255u8 {
+                let linear: f64 = AdobeRgb::into_linear(expected);
+                let result: u8 = AdobeRgb::from_linear(linear);
+                assert_eq!(result, expected);
+            }
+        }
     }
 }
