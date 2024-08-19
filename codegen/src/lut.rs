@@ -193,7 +193,7 @@ fn gen_into_linear_lut_u8(writer: &mut File, entries: &[LutEntryU8]) {
         }
 
         let table_name = format!("{fn_type_uppercase}_U8_TO_F64");
-        writeln!(writer, "pub const {table_name}: [f64; {table_size}] = [").unwrap();
+        writeln!(writer, "const {table_name}: [f64; {table_size}] = [").unwrap();
         writer.write_all(&table).unwrap();
         writeln!(writer, "];").unwrap();
 
@@ -222,7 +222,7 @@ fn gen_into_linear_lut_u8(writer: &mut File, entries: &[LutEntryU8]) {
 }
 
 #[cfg(not(feature = "float_lut"))]
-pub fn gen_into_linear_lut_u8(_writer: &mut File, _entries: &[LutEntryU8]) {}
+fn gen_into_linear_lut_u8(_writer: &mut File, _entries: &[LutEntryU8]) {}
 
 #[cfg(feature = "float_lut16")]
 fn gen_into_linear_lut_u16(writer: &mut File, entries: &[LutEntryU16]) {
@@ -250,7 +250,7 @@ fn gen_into_linear_lut_u16(writer: &mut File, entries: &[LutEntryU16]) {
         }
 
         let table_name = format!("{fn_type_uppercase}_U16_TO_F64");
-        writeln!(writer, "pub const {table_name}: [f64; {table_size}] = [").unwrap();
+        writeln!(writer, "static {table_name}: [f64; {table_size}] = [").unwrap();
         writer.write_all(&table).unwrap();
         writeln!(writer, "];").unwrap();
 
@@ -342,7 +342,7 @@ fn gen_from_linear_lut_u8(writer: &mut File, entries: &[LutEntryU8]) {
             }
 
             let table_name = format!("TO_{fn_type_uppercase}_U8");
-            writeln!(writer, "pub const {table_name}: [u32; {table_size}] = [").unwrap();
+            writeln!(writer, "const {table_name}: [u32; {table_size}] = [").unwrap();
             writer.write_all(&table).unwrap();
             writeln!(writer, "\n];").unwrap();
 
@@ -476,7 +476,7 @@ fn gen_from_linear_lut_u16(writer: &mut File, entries: &[LutEntryU16]) {
             }
 
             let table_name = format!("TO_{fn_type_uppercase}_U16");
-            writeln!(writer, "pub const {table_name}: [u64; {table_size}] = [").unwrap();
+            writeln!(writer, "const {table_name}: [u64; {table_size}] = [").unwrap();
             writer.write_all(&table).unwrap();
             writeln!(writer, "\n];").unwrap();
 
@@ -555,9 +555,21 @@ fn gen_from_linear_lut_u16(writer: &mut File, entries: &[LutEntryU16]) {
                             \n\t\t\tunsafe {{ *{table_name}.get_unchecked(i) }}\
                         \n\t\t}};\
                         \n\t\tlet bias = (entry >> 32) << 17;\
-                        \n\t\tlet scale = entry & 0xffff_ffff;\
-                        \n\n\t\tlet t = (input_bits as u64 >> {man_shift}) & 0xffff;\
-                        \n\t\tlet res = (bias + scale * t) >> 32;\
+                        \n\t\tlet scale = entry & 0xffff_ffff;"
+            ).unwrap();
+            if man_shift == 0 {
+                writeln!(writer, "\n\t\tlet t = input_bits as u64 & 0xffff;").unwrap();
+            } else {
+                writeln!(
+                    writer,
+                    "\n\t\tlet t = (input_bits as u64 >> {man_shift}) & 0xffff;"
+                )
+                .unwrap();
+            }
+            writeln!(
+                writer,
+                "\
+                        \t\tlet res = (bias + scale * t) >> 32;\
                         \n\t\t#[cfg(test)]\
                         \n\t\t{{\
                             \n\t\t\tdebug_assert!(res < 65536, \"{{}}\", res);\
@@ -573,4 +585,4 @@ fn gen_from_linear_lut_u16(writer: &mut File, entries: &[LutEntryU16]) {
 }
 
 #[cfg(not(feature = "fast_uint_lut16"))]
-fn gen_from_linear_lut_u16(_writer: &mut File, entries: &[LutEntryU16]) {}
+fn gen_from_linear_lut_u16(_writer: &mut File, _entries: &[LutEntryU16]) {}
