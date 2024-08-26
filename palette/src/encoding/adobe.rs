@@ -157,7 +157,6 @@ mod test {
         }
     }
 
-    #[cfg(feature = "adobe_rgb_lut")]
     mod lut {
         use crate::encoding::{AdobeRgb, FromLinear, IntoLinear};
 

@@ -179,7 +179,7 @@ mod test {
         }
     }
 
-    #[cfg(feature = "prophoto_lut")]
+    #[cfg(feature = "gamma_lut_u16")]
     mod lut {
         use crate::encoding::{FromLinear, IntoLinear, ProPhotoRgb};
 
@@ -206,7 +206,7 @@ mod test {
         #[test]
         fn u16_to_f32_to_u16() {
             for expected in 0..=65535u16 {
-                let linear: f32 = ProPhotoRgb::into_linear(expected as f32 / 65535.0);
+                let linear: f32 = ProPhotoRgb::into_linear(expected);
                 let result: u16 = ProPhotoRgb::from_linear(linear);
                 assert_eq!(result, expected);
             }
@@ -215,7 +215,7 @@ mod test {
         #[test]
         fn u16_to_f64_to_u16() {
             for expected in 0..=65535u16 {
-                let linear: f64 = ProPhotoRgb::into_linear(expected as f64 / 65535.0);
+                let linear: f64 = ProPhotoRgb::into_linear(expected);
                 let result: u16 = ProPhotoRgb::from_linear(linear);
                 assert_eq!(result, expected);
             }

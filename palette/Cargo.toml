@@ -27,7 +27,7 @@ categories = ["graphics", "multimedia::images", "no-std"]
 rust-version = "1.61.0"
 
 [features]
-default = ["named_from_str", "std", "approx", "float_u8_lut"]
+default = ["named_from_str", "std", "approx"]
 named_from_str = ["named", "phf"]
 named = []
 random = ["rand"]
@@ -35,12 +35,7 @@ serializing = ["serde", "std"]
 find-crate = ["palette_derive/find-crate"]
 std = ["alloc", "approx?/std"]
 alloc = []
-float_u8_lut = ["rec_oetf_lut", "adobe_rgb_lut", "p3_gamma_lut"]
-rec_oetf_lut = []
-adobe_rgb_lut = []
-p3_gamma_lut = []
-float_u16_lut = ["prophoto_lut"]
-prophoto_lut = []
+gamma_lut_u16 = []
 
 [lib]
 bench = false

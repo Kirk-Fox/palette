@@ -178,7 +178,6 @@ mod test {
         }
     }
 
-    #[cfg(feature = "rec_oetf_lut")]
     mod lut {
         use crate::encoding::{FromLinear, IntoLinear, RecOetf};
 

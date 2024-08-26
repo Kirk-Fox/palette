@@ -343,7 +343,6 @@ mod test {
         }
     }
 
-    #[cfg(feature = "p3_gamma_lut")]
     mod lut {
         use crate::encoding::{FromLinear, IntoLinear, P3Gamma};
 
